@@ -69,6 +69,33 @@ export const UPDATE_PERSON = gql`
     }
 `;
 
+export const UPDATE_CAR = gql`
+    mutation UpdateCar(
+        $addCarId: String!
+        $personId: String!
+        $year: Int!
+        $make: String!
+        $model: String!
+        $price: Float!
+    ) {
+        UpdateCar(
+            id: $addCarId
+            personId: $personId
+            year: $year
+            make: $make
+            model: $model
+            price: $price
+        ) {
+            price
+            model
+            make
+            year
+            personId
+            id
+        }
+    }
+`;
+
 export const REMOVE_PERSON = gql`
     mutation RemovePerson($id: String!) {
         removePerson(id: $id) {

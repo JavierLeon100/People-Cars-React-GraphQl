@@ -3,6 +3,7 @@ import { Card } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import UpdatePerson from "../forms/UpdatePerson";
 import RemovePerson from "../buttons/RemovePerson";
+import CardCar from "./CardCar";
 
 const getStyles = (props) => ({
     card: {
@@ -14,11 +15,13 @@ const Person = (props) => {
     const [id] = useState(props.id);
     const [firstName, setFirstName] = useState(props.firstName);
     const [lastName, setLastName] = useState(props.lastName);
-    const [editMode, setEditMode] = useState(false);
+    const [cars, setCars] = useState(props.cars);
+    const [editModePerson, setEditModePerson] = useState(false);
+
     const styles = getStyles();
 
-    const handleButtonClick = () => {
-        setEditMode(!editMode);
+    const handleButtonPersonClick = () => {
+        setEditModePerson(!editModePerson);
     };
 
     const updateStateVariable = (variable, value) => {
@@ -36,18 +39,21 @@ const Person = (props) => {
 
     return (
         <div>
-            {editMode ? (
+            {editModePerson ? (
                 <UpdatePerson
                     id={props.id}
                     firstName={props.firstName}
                     lastName={props.lastName}
-                    onButtonClick={handleButtonClick}
+                    onButtonClick={handleButtonPersonClick}
                     updateStateVariable={updateStateVariable}
                 />
             ) : (
                 <Card
                     actions={[
-                        <EditOutlined key="edit" onClick={handleButtonClick} />,
+                        <EditOutlined
+                            key="edit"
+                            onClick={handleButtonPersonClick}
+                        />,
                         <RemovePerson
                             id={id}
                             firstName={firstName}
@@ -55,8 +61,11 @@ const Person = (props) => {
                         />,
                     ]}
                     style={styles.card}
+                    title={firstName + " " + lastName}
                 >
-                    {firstName} {lastName}
+                    {cars.length > 0
+                        ? cars.map((car, id) => <CardCar car={car} key={id} />)
+                        : "This person has no cars 🏎"}
                 </Card>
             )}
         </div>

@@ -22,17 +22,18 @@ const AddPerson = () => {
                 id,
                 firstName,
                 lastName,
+                cars: [],
             },
-            // optimisticResponse: {
-            //     __typename: "Mutation",
-            //     addPerson: {
-            //         __type: "Person",
-            //         id,
-            //         firstName,
-            //         lastName,
-            //         cars: [],
-            //     },
-            // },
+            optimisticResponse: {
+                __typename: "Mutation",
+                addPerson: {
+                    __type: "Person",
+                    id,
+                    firstName,
+                    lastName,
+                    cars: [],
+                },
+            },
             update: (proxy, { data: { addPerson } }) => {
                 const data = proxy.readQuery({ query: GET_PEOPLE });
                 proxy.writeQuery({

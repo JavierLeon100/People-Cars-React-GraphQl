@@ -1,13 +1,16 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Button, Form, Input, Select } from "antd";
-import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { ADD_CAR, GET_PEOPLE } from "../../queries";
+import { useDebugValue, useEffect, useState } from "react";
+import { ADD_CAR, GET_PEOPLE, UPDATE_CAR } from "../../queries";
 
-const AddCar = () => {
-    const [addCarId] = useState(uuidv4());
-    const [addCar] = useMutation(ADD_CAR);
-    const [personId, setPersonId] = useState();
+const UpdateCar = (props) => {
+    const [updateCar] = useMutation(UPDATE_CAR);
+    const [id, setId] = useState(props.id);
+    const [make, setMake] = useState(props.make);
+    const [model, setModel] = useState(props.model);
+    const [personId, setPersonId] = useState(props.personId);
+    const [price, setPrice] = useState(props.price);
+    const [year, setYear] = useState(props.year);
     const [form] = Form.useForm();
     const [, forcedUpdate] = useState();
     const { Option } = Select;
@@ -25,16 +28,16 @@ const AddCar = () => {
     if (error) return `Error ${error.message}`;
 
     const onFinish = (values) => {
-        const { price, model, make, year, personId } = values;
+        const { price, model, make, year } = values;
 
-        addCar({
+        updateCar({
             variables: {
                 price: parseFloat(price),
                 model,
                 make,
                 year: parseInt(year),
                 personId,
-                addCarId,
+                id,
             },
             optimisticResponse: {
                 __typename: "Mutation",
@@ -45,7 +48,7 @@ const AddCar = () => {
                     make,
                     year,
                     personId,
-                    addCarId,
+                    id,
                 },
             },
             update: (proxy, { data: { addPerson } }) => {
@@ -59,65 +62,70 @@ const AddCar = () => {
                 });
             },
         });
+
+        props.onButtonClick();
     };
 
     return (
         <Form
             form={form}
-            name="add-car-form"
+            name="update-car-form"
             onFinish={onFinish}
             layout="horizontal"
             size="large"
-            style={{ marginBottom: "40px" }}
+            style={{ margin: "40px" }}
+            initialValues={{
+                year: year,
+                make: make,
+                model: model,
+                price: price,
+                personId: personId,
+            }}
         >
             <Form.Item
                 name="year"
                 rules={[
                     {
-                        required: true,
                         message: "Please input year of car",
                     },
                 ]}
             >
-                <Input placeholder="Year i.e. 2000" />
+                <Input placeholder="Year i.e. 2000" allowClear />
             </Form.Item>
             <Form.Item
                 name="make"
                 rules={[
                     {
-                        required: true,
                         message: "Please input make of car",
                     },
                 ]}
             >
-                <Input placeholder="Make i.e. Chevrolet" />
+                <Input placeholder="Make i.e. Chevrolet" allowClear />
             </Form.Item>
             <Form.Item
                 name="model"
                 rules={[
                     {
-                        required: true,
                         message: "Please input model of car",
                     },
                 ]}
             >
-                <Input placeholder="Model i.e. Spark" />
+                <Input placeholder="Model i.e. Spark" allowClear />
             </Form.Item>
             <Form.Item
                 name="price"
                 rules={[
                     {
-                        required: true,
                         message: "Please price year of car",
                     },
                 ]}
             >
-                <Input placeholder="Price i.e. 5000" />
+                <Input placeholder="Price i.e. 5000" allowClear />
             </Form.Item>
 
             <Form.Item
                 name="personId"
-                rules={[{ required: true, message: "Please select owner" }]}
+                rules={[{ message: "Please select owner" }]}
             >
                 <Select
                     placeholder="Select The Owner"
@@ -134,22 +142,14 @@ const AddCar = () => {
 
             <Form.Item shouldUpdate={true}>
                 {() => (
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        disabled={
-                            !form.isFieldsTouched(true) ||
-                            form
-                                .getFieldError()
-                                .filter(({ errors }) => errors.length).length
-                        }
-                    >
+                    <Button type="primary" htmlType="submit">
                         Add Car
                     </Button>
                 )}
             </Form.Item>
+            <Button onClick={props.onButtonClick}>Cancel</Button>
         </Form>
     );
 };
 
-export default AddCar;
+export default UpdateCar;
