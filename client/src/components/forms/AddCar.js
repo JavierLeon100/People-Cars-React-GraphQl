@@ -7,7 +7,6 @@ import { ADD_CAR, GET_PEOPLE } from "../../queries";
 const AddCar = () => {
     const [addCarId] = useState(uuidv4());
     const [addCar] = useMutation(ADD_CAR);
-    const [personId, setPersonId] = useState();
     const [form] = Form.useForm();
     const [, forcedUpdate] = useState();
     const { Option } = Select;
@@ -15,10 +14,6 @@ const AddCar = () => {
     useEffect(() => {
         forcedUpdate({});
     }, []);
-
-    const onOwnerChange = (value) => {
-        setPersonId(value);
-    };
 
     const { loading, error, data } = useQuery(GET_PEOPLE);
     if (loading) return "Loading...";
@@ -121,7 +116,7 @@ const AddCar = () => {
             >
                 <Select
                     placeholder="Select The Owner"
-                    onChange={onOwnerChange}
+                    // onChange={onOwnerChange}
                     allowClear
                 >
                     {data.people.map(({ id, firstName, lastName }) => (

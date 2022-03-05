@@ -12,23 +12,19 @@ const UpdateCar = (props) => {
     const [price, setPrice] = useState(props.price);
     const [year, setYear] = useState(props.year);
     const [form] = Form.useForm();
-    const [, forcedUpdate] = useState();
+    const [, forceUpdate] = useState();
     const { Option } = Select;
 
     useEffect(() => {
-        forcedUpdate({});
+        forceUpdate({});
     }, []);
-
-    const onOwnerChange = (value) => {
-        setPersonId(value);
-    };
 
     const { loading, error, data } = useQuery(GET_PEOPLE);
     if (loading) return "Loading...";
     if (error) return `Error ${error.message}`;
 
     const onFinish = (values) => {
-        const { price, model, make, year } = values;
+        const { price, model, make, year, personId } = values;
 
         updateCar({
             variables: {
@@ -51,19 +47,35 @@ const UpdateCar = (props) => {
                     id,
                 },
             },
-            update: (proxy, { data: { addPerson } }) => {
-                const data = proxy.readQuery({ query: GET_PEOPLE });
-                proxy.writeQuery({
-                    query: GET_PEOPLE,
-                    data: {
-                        ...data,
-                        people: [...data.people, addPerson],
-                    },
-                });
-            },
         });
 
         props.onButtonClick();
+    };
+
+    const updateStateVariable = (variable, value) => {
+        props.updateStateVariable(variable, value);
+        switch (variable) {
+            case "id":
+                setId(value);
+                break;
+            case "make":
+                setMake(value);
+                break;
+            case "model":
+                setModel(value);
+                break;
+            case "personId":
+                setPersonId(value);
+                break;
+            case "price":
+                setPrice(value);
+                break;
+            case "year":
+                setYear(value);
+                break;
+            default:
+                break;
+        }
     };
 
     return (
@@ -82,15 +94,15 @@ const UpdateCar = (props) => {
                 personId: personId,
             }}
         >
-            <Form.Item
-                name="year"
-                rules={[
-                    {
-                        message: "Please input year of car",
-                    },
-                ]}
-            >
-                <Input placeholder="Year i.e. 2000" allowClear />
+            <Form.Item name="year">
+                <Input
+                    placeholder="Year i.e. 2000"
+                    allowClear
+                    onChange={(e) =>
+                        updateStateVariable("year", e.target.value)
+                    }
+                    value={year}
+                />
             </Form.Item>
             <Form.Item
                 name="make"
@@ -100,27 +112,29 @@ const UpdateCar = (props) => {
                     },
                 ]}
             >
-                <Input placeholder="Make i.e. Chevrolet" allowClear />
+                <Input
+                    placeholder="Make i.e. Chevrolet"
+                    allowClear
+                    onChange={(e) =>
+                        updateStateVariable("make", e.target.value)
+                    }
+                />
             </Form.Item>
-            <Form.Item
-                name="model"
-                rules={[
-                    {
-                        message: "Please input model of car",
-                    },
-                ]}
-            >
-                <Input placeholder="Model i.e. Spark" allowClear />
+            <Form.Item name="model">
+                <Input
+                    placeholder="Model i.e. Spark"
+                    allowClear
+                    onChange={(e) =>
+                        updateStateVariable("model", e.target.value)
+                    }
+                />
             </Form.Item>
-            <Form.Item
-                name="price"
-                rules={[
-                    {
-                        message: "Please price year of car",
-                    },
-                ]}
-            >
-                <Input placeholder="Price i.e. 5000" allowClear />
+            <Form.Item name="price">
+                <Input
+                    placeholder="Price i.e. 5000"
+                    allowClear
+                    onChange={(e) => updateStateVariable("price", e)}
+                />
             </Form.Item>
 
             <Form.Item
@@ -129,7 +143,7 @@ const UpdateCar = (props) => {
             >
                 <Select
                     placeholder="Select The Owner"
-                    onChange={onOwnerChange}
+                    onChange={updateStateVariable(personId)}
                     allowClear
                 >
                     {data.people.map(({ id, firstName, lastName }) => (
@@ -143,7 +157,7 @@ const UpdateCar = (props) => {
             <Form.Item shouldUpdate={true}>
                 {() => (
                     <Button type="primary" htmlType="submit">
-                        Add Car
+                        Update Car
                     </Button>
                 )}
             </Form.Item>

@@ -4,6 +4,7 @@ import { EditOutlined } from "@ant-design/icons";
 import UpdatePerson from "../forms/UpdatePerson";
 import RemovePerson from "../buttons/RemovePerson";
 import CardCar from "./CardCar";
+import CarList from "../lists/CarList.";
 
 const getStyles = (props) => ({
     card: {
@@ -63,9 +64,7 @@ const Person = (props) => {
                     style={styles.card}
                     title={firstName + " " + lastName}
                 >
-                    {cars.length > 0
-                        ? cars.map((car, id) => <CardCar car={car} key={id} />)
-                        : "This person has no cars 🏎"}
+                    <CarList cars={cars} />
                 </Card>
             )}
         </div>

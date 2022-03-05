@@ -115,6 +115,7 @@ const typeDefs = gql`
         people: [Person]
         person(id: String!): Person
         personWithCar(id: String!): Person
+        cars: [Car]
     }
 
     type Mutation {
@@ -137,7 +138,7 @@ const typeDefs = gql`
             model: String
             price: Float
         ): Car
-        deleteCar(id: String!): Car
+        removeCar(id: String!): Car
     }
 `;
 
@@ -147,6 +148,7 @@ const resolvers = {
         personWithCar(parent, args, context, info) {
             return find(people, { id: args.id });
         },
+        cars: () => cars,
     },
     Person: {
         cars: (person) => {
@@ -221,11 +223,11 @@ const resolvers = {
 
             return Car;
         },
-        removePerson(root, args) {
+        removeCar(root, args) {
             const removedCar = find(cars, { id: args.id });
 
             if (!removedCar) {
-                throw new Error(`Car with id ${args.id} not found`);
+                throw new Error(`Car with id ${args.id} not found on ${cars}`);
             }
 
             remove(cars, (c) => {

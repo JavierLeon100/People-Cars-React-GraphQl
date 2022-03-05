@@ -71,27 +71,27 @@ export const UPDATE_PERSON = gql`
 
 export const UPDATE_CAR = gql`
     mutation UpdateCar(
-        $addCarId: String!
+        $id: String!
         $personId: String!
         $year: Int!
         $make: String!
         $model: String!
         $price: Float!
     ) {
-        UpdateCar(
-            id: $addCarId
+        updateCar(
+            id: $id
             personId: $personId
             year: $year
             make: $make
             model: $model
             price: $price
         ) {
+            id
+            personId
             price
             model
             make
             year
-            personId
-            id
         }
     }
 `;
@@ -102,6 +102,19 @@ export const REMOVE_PERSON = gql`
             id
             firstName
             lastName
+        }
+    }
+`;
+
+export const REMOVE_CAR = gql`
+    mutation RemoveCar($id: String!) {
+        removeCar(id: $id) {
+            id
+            personId
+            price
+            model
+            make
+            year
         }
     }
 `;
